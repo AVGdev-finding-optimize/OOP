@@ -1,0 +1,62 @@
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1e40af;
+    --bg: #f8fafc;
+    --white: #ffffff;
+    --text: #334155;
+    --border: #e2e8f0;
+    --success: #22c55e;
+    --error: #ef4444;
+}
+
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+
+/* Navbar */
+.navbar { background: var(--primary); color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.logo { font-weight: bold; font-size: 1.2rem; }
+.nav-btn { background: transparent; border: 1px solid transparent; color: rgba(255,255,255,0.8); padding: 8px 16px; margin-left: 10px; border-radius: 6px; cursor: pointer; transition: 0.2s; font-weight: 500; }
+.nav-btn:hover, .nav-btn.active { background: rgba(255,255,255,0.2); color: white; }
+
+/* Container */
+.container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+.screen { display: none; animation: fadeEffect 0.3s; }
+.screen.active { display: block; }
+@keyframes fadeEffect { from {opacity: 0;} to {opacity: 1;} }
+
+/* Home Screen */
+.hero-box { background: white; padding: 40px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-top: 40px; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin: 40px 0; }
+.stat-card { background: #f1f5f9; padding: 20px; border-radius: 8px; }
+.stat-card h3 { color: var(--primary); font-size: 2rem; margin: 0; }
+
+/* Review Screen */
+.layout-grid { display: grid; grid-template-columns: 300px 1fr; gap: 20px; height: calc(100vh - 100px); }
+.sidebar { background: white; border-radius: 12px; padding: 15px; overflow-y: auto; height: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.topic-item { padding: 12px; cursor: pointer; border-radius: 6px; margin-bottom: 5px; transition: 0.2s; border-left: 3px solid transparent; }
+.topic-item:hover { background: #f1f5f9; }
+.topic-item.active { background: #eff6ff; color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
+.content-area { background: white; border-radius: 12px; padding: 30px; overflow-y: auto; height: 100%; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+/* Review Content Styling */
+.slide-title { color: var(--primary); border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 20px; }
+.concept-block { background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #e2e8f0; }
+.concept-title { font-weight: 700; display: block; margin-bottom: 5px; color: var(--primary-dark); }
+
+/* Exam Screen */
+.exam-header { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+.question-card { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e2e8f0; }
+.q-text { font-weight: 600; margin-bottom: 15px; font-size: 1.1rem; }
+.code-block { background: #1e1e1e; color: #d4d4d4; padding: 15px; border-radius: 6px; font-family: monospace; overflow-x: auto; margin: 10px 0; border-left: 4px solid var(--primary); }
+.options-list label { display: block; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+.options-list label:hover { background: #f8fafc; border-color: var(--primary); }
+.options-list input { margin-right: 10px; }
+
+/* Buttons */
+.cta-btn { background: var(--primary); color: white; border: none; padding: 12px 30px; border-radius: 6px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.cta-btn:hover { background: var(--primary-dark); transform: translateY(-2px); }
+.cta-btn.secondary { background: #64748b; }
+
+/* Feedback */
+.feedback { margin-top: 15px; padding: 15px; border-radius: 6px; display: none; }
+.feedback.correct { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.feedback.incorrect { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
