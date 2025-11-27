@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ thống Ôn tập OOP & Java - UET</title>
+    <style>
+        :root {
+            --primary: #2563eb;       /* Xanh dương chủ đạo */
+            --primary-dark: #1e40af;
+            --accent: #f59e0b;        /* Màu cam nhấn */
+            --bg: #f8fafc;            /* Màu nền xám nhạt */
+            --text: #1e293b;          /* Màu chữ đậm */
+            --white: #ffffff;
+            --success: #22c55e;
+            --error: #ef4444;
+        }
+
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; line-height: 1.6; }
+
+        /* --- NAVIGATION --- */
+        .navbar {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; }
+        .nav-links button {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            margin-left: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .nav-links button:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+
+        /* --- LAYOUT & SCREENS --- */
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        .screen { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- HOME SCREEN --- */
+        .hero-section { text-align: center; margin-bottom: 3rem; padding: 3rem 1rem; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; border-radius: 1rem; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.2); }
+        .hero-title { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .menu-card {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+        .menu-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--primary); }
+        .card-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
+        .card-title { font-size: 1.25rem; font-weight: 700; color: var(--primary); margin-bottom: 0.5rem; }
+        .card-desc { color: #64748b; font-size: 0.95rem; }
+
+        /* --- REVIEW SCREEN --- */
+        .accordion-item { background: var(--white); border-radius: 0.5rem; margin-bottom: 1rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1); overflow: hidden; }
+        .accordion-header {
+            padding: 1.25rem;
+            cursor: pointer;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            color: var(--text);
+            transition: background 0.2s;
+        }
+        .accordion-header:hover { background: #f1f5f9; color: var(--primary); }
+        .accordion-content {
+            display: none;
+            padding: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            background: #fafafa;
+            line-height: 1.8;
+        }
+        .accordion-content.open { display: block; }
+        .tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 700; margin-right: 8px; }
+
+        /* --- QUIZ SCREEN --- */
+        .quiz-status-bar {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 80px; /* Below navbar */
+            z-index: 90;
+        }
+        .score-badge { background: var(--accent); color: white; padding: 5px 12px; border-radius: 20px; font-weight: bold; }
+
+        .question-block { background: var(--white); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .q-title { font-weight: 700; margin-bottom: 1rem; font-size: 1.1rem; }
+
+        /* Code block styling */
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 1rem; border-radius: 0.5rem; overflow-x: auto; font-family: 'Consolas', monospace; font-size: 0.9rem; border-left: 4px solid var(--accent); margin: 10px 0; }
+        .kwd { color: #569cd6; } .str { color: #ce9178; } .cls { color: #4ec9b0; } .com { color: #6a9955; font-style: italic; }
+
+        .options-group { display: grid; gap: 0.75rem; }
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-label:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .option-label:has(input:checked) { border-color: var(--primary); background: #eff6ff; font-weight: 600; }
+        input[type="radio"] { margin-right: 12px; width: 1.2rem; height: 1.2rem; }
+
+        input[type="text"] { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 0.5rem; font-size: 1rem; margin-top: 5px; }
+        input[type="text"]:focus { outline: none; border-color: var(--primary); }
+
+        /* Feedback Styling */
+        .feedback { margin-top: 1rem; padding: 1rem; border-radius: 0.5rem; display: none; font-size: 0.95rem; }
+        .feedback.correct { background: #dcfce7; border: 1px solid #86efac; color: #166534; }
+        .feedback.incorrect { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+
+        .btn-submit { background: var(--primary); color: white; width: 100%; padding: 1rem; border: none; border-radius: 0.5rem; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 2rem; transition: background 0.2s; }
+        .btn-submit:hover { background: var(--primary-dark); }
+
+        /* Scrollbar custom */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="logo">☕ OOP Master UET</div>
+    <div class="nav-links">
+        <button onclick="showScreen('home')">🏠 Trang chủ</button>
+        <button onclick="showScreen('review')">📚 Ôn tập</button>
+        <button onclick="showScreen('quiz')">✍️ Thi thử</button>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- SCREEN 1: DASHBOARD -->
+    <div id="home-screen" class="screen active">
+        <div class="hero-section">
+            <h1 class="hero-title">Hệ thống Ôn tập OOP & Java</h1>
+            <p>Tổng hợp kiến thức từ 12 chuyên đề bài giảng INT2204</p>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="showScreen('review')">
+                <span class="card-icon">📖</span>
+                <div class="card-title">Kho Tài Liệu</div>
+                <div class="card-desc">Xem lại tóm tắt lý thuyết từ các file PDF (Slides) đã học.</div>
+            </div>
+            <div class="menu-card" onclick="showScreen('quiz')">
+                <span class="card-icon">📝</span>
+                <div class="card-title">Làm Bài Thi</div>
+                <div class="card-desc">Bộ câu hỏi trắc nghiệm, điền từ và đọc hiểu code có chấm điểm.</div>
+            </div>
+            <div class="menu-card" style="cursor: default; opacity: 0.7;">
+                <span class="card-icon">📊</span>
+                <div class="card-title">Tiến độ</div>
+                <div class="card-desc">Tính năng đang phát triển...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: REVIEW (SLIDES) -->
+    <div id="review-screen" class="screen">
+        <h2 style="margin-bottom: 20px; color: var(--primary);">📂 Tóm tắt Lý thuyết (Slide Review)</h2>
+        <p style="margin-bottom: 20px; color: #64748b;">Nội dung được trích xuất và tổng hợp từ 12 file bài giảng của bạn.</p>
+
+        <div id="review-container">
+            <!-- Nội dung Review sẽ được render bởi JS -->
+        </div>
+
+        <button class="btn-submit" style="margin-top: 20px; background: #64748b;" onclick="showScreen('home')">Quay lại Trang chủ</button>
+    </div>
+
+    <!-- SCREEN 3: QUIZ -->
+    <div id="quiz-screen" class="screen">
+        <div class="quiz-status-bar">
+            <div><strong>Đề thi tổng hợp</strong> (OOP, Java Core, Design Patterns)</div>
+            <div class="score-badge">Điểm: <span id="current-score">0</span></div>
+        </div>
+
+        <form id="quiz-form">
+            <div id="quiz-container">
+                <!-- Nội dung Quiz sẽ được render bởi JS -->
+            </div>
+        </form>
+
+        <button class="btn-submit" onclick="submitQuiz()">Nộp Bài & Xem Kết Quả</button>
+    </div>
+
+</div>
+
+<script>
+    /* -----------------------------------------------------
+       DATA SOURCE: Tổng hợp từ 12 File PDF User cung cấp
+       ----------------------------------------------------- */
+
+    const slideData = [
+        {
+            title: "Phần 1: Nhập môn & Tư duy OOP (File 1, 2, 3)",
+            tags: ["Class", "Object", "Memory"],
+            content: `
+            <ul>
+                <li><b>Class & Object:</b> Class là bản thiết kế (blueprint), Object là thể hiện (instance) cụ thể.</li>
+                <li><b>4 Tính chất OOP:</b>
+                    <ul>
+                        <li><i>Encapsulation (Đóng gói):</i> Che giấu dữ liệu dùng <code>private</code>, truy xuất qua getter/setter.</li>
+                        <li><i>Inheritance (Kế thừa):</i> Tái sử dụng mã nguồn (<code>extends</code>). Java chỉ đơn kế thừa class.</li>
+                        <li><i>Polymorphism (Đa hình):</i> Một hành động có nhiều hình thái (Overloading - Compile time, Overriding - Runtime).</li>
+                        <li><i>Abstraction (Trừu tượng):</i> Ẩn chi tiết cài đặt, chỉ hiện tính năng (Abstract Class, Interface).</li>
+                    </ul>
+                </li>
+                <li><b>Bộ nhớ Java:</b>
+                    <ul>
+                        <li><b>Stack:</b> Lưu biến cục bộ, tham chiếu (references).</li>
+                        <li><b>Heap:</b> Lưu đối tượng thực sự (new Objects).</li>
+                    </ul>
+                </li>
+                <li><b>Garbage Collection:</b> Cơ chế tự động giải phóng bộ nhớ của các đối tượng không còn tham chiếu tới (Unreachable).</li>
+            </ul>`
+        },
+        {
+            title: "Phần 2: Java Core Nâng cao (File 4, 10)",
+            tags: ["Static", "Final", "String", "Wrapper"],
+            content: `
+            <ul>
+                <li><b>Static:</b> Thuộc về lớp, dùng chung cho mọi instance. Gọi trực tiếp qua tên lớp.</li>
+                <li><b>Final:</b>
+                    <ul>
+                        <li>Biến: Hằng số.</li>
+                        <li>Phương thức: Không thể ghi đè (Override).</li>
+                        <li>Lớp: Không thể kế thừa (VD: String, Math).</li>
+                    </ul>
+                </li>
+                <li><b>String Pool:</b> Vùng nhớ đặc biệt trong Heap để lưu trữ String literal giúp tiết kiệm bộ nhớ. String là bất biến (Immutable).</li>
+                <li><b>Wrapper Classes:</b> (Integer, Double...) bao bọc primitive types để dùng như Object (cần thiết cho Collections).</li>
+            </ul>`
+        },
+        {
+            title: "Phần 3: Kế thừa, Abstract & Interface (File 5, 6, 7)",
+            tags: ["Extends", "Implements", "Abstract"],
+            content: `
+            <ul>
+                <li><b>Abstract Class:</b> Dùng làm khung sườn. Có thể có method abstract hoặc concrete. Không thể khởi tạo (new).</li>
+                <li><b>Interface:</b> Bản hợp đồng (contract).
+                    <ul>
+                        <li>Mặc định method là <code>public abstract</code>.</li>
+                        <li>Từ Java 8 có thể có <code>default method</code> và <code>static method</code>.</li>
+                        <li>Hỗ trợ đa kế thừa hành vi (implements nhiều interface).</li>
+                    </ul>
+                </li>
+                <li><b>Casting:</b>
+                    <ul>
+                        <li>Upcasting: Con -> Cha (Tự động, an toàn).</li>
+                        <li>Downcasting: Cha -> Con (Phải ép kiểu tường minh, rủi ro <code>ClassCastException</code>).</li>
+                    </ul>
+                </li>
+            </ul>`
+        },
+        {
+            title: "Phần 4: Xử lý ngoại lệ (File 8)",
+            tags: ["Try-Catch", "Throw", "Throws"],
+            content: `
+            <ul>
+                <li><b>Checked Exception:</b> Lỗi bắt buộc xử lý lúc biên dịch (IOException, SQLException).</li>
+                <li><b>Unchecked Exception (Runtime):</b> Lỗi do logic code (NullPointerException, ArithmeticException). Không bắt buộc try-catch.</li>
+                <li><b>Finally:</b> Khối lệnh luôn chạy sau try/catch, dùng để đóng tài nguyên (File, DB connection).</li>
+            </ul>`
+        },
+        {
+            title: "Phần 5: Collections & Generics (File 10, 11)",
+            tags: ["List", "Map", "Generics", "Wildcard"],
+            content: `
+            <ul>
+                <li><b>Collections Framework:</b>
+                    <ul>
+                        <li><code>ArrayList</code>: Mảng động, truy xuất nhanh, chèn/xóa chậm.</li>
+                        <li><code>LinkedList</code>: Danh sách liên kết, chèn/xóa nhanh, truy xuất chậm.</li>
+                        <li><code>HashMap</code>: Lưu cặp Key-Value. Key duy nhất. Truy xuất cực nhanh O(1).</li>
+                        <li><code>Stack</code> (LIFO) và <code>Queue</code> (FIFO).</li>
+                    </ul>
+                </li>
+                <li><b>Generics:</b> Giúp code an toàn kiểu (Type-safe). VD: <code>List&lt;String&gt;</code>.</li>
+                <li><b>Wildcards:</b> <code>? extends T</code> (Upper bound - chỉ đọc), <code>? super T</code> (Lower bound - ghi).</li>
+            </ul>`
+        },
+        {
+            title: "Phần 6: Design Patterns & SOLID (File 12)",
+            tags: ["Creational", "Structural", "Behavioral"],
+            content: `
+            <ul>
+                <li><b>Creational (Khởi tạo):</b>
+                    <ul>
+                        <li><i>Singleton:</i> 1 instance duy nhất toàn cục.</li>
+                        <li><i>Factory Method:</i> Giao việc khởi tạo cho lớp con.</li>
+                        <li><i>Abstract Factory:</i> Tạo họ đối tượng liên quan.</li>
+                        <li><i>Prototype:</i> Clone đối tượng.</li>
+                    </ul>
+                </li>
+                <li><b>Structural (Cấu trúc):</b>
+                    <ul>
+                        <li><i>Adapter:</i> Chuyển đổi giao diện không tương thích.</li>
+                        <li><i>Decorator:</i> Thêm hành vi động cho đối tượng (Wrapper).</li>
+                        <li><i>Composite:</i> Cấu trúc cây (Folder-File).</li>
+                    </ul>
+                </li>
+                <li><b>Behavioral (Hành vi):</b>
+                    <ul>
+                        <li><i>Strategy:</i> Thay đổi thuật toán tại runtime.</li>
+                    </ul>
+                </li>
+                <li><b>SOLID:</b> 5 nguyên lý thiết kế giúp code linh hoạt, dễ bảo trì.</li>
+            </ul>`
+        }
+    ];
+
+    const quizData = [
+        // --- OOP Basics ---
+        {
+            id: 1, type: "radio",
+            question: "Trong Java, tính chất nào cho phép một phương thức có cùng tên nhưng khác tham số (Signature)?",
+            options: ["Overriding", "Overloading", "Encapsulation", "Inheritance"],
+            answer: 1,
+            explanation: "Đây là <b>Overloading</b> (Nạp chồng), xảy ra tại thời điểm biên dịch (Compile-time polymorphism)."
+        },
+        // --- Java Core ---
+        {
+            id: 2, type: "text",
+            question: "Từ khóa nào được sử dụng để ngăn chặn một phương thức bị ghi đè (Override) bởi lớp con?",
+            answer: "final",
+            explanation: "Phương thức khai báo <code>final</code> không thể bị override."
+        },
+        // --- Exceptions ---
+        {
+            id: 3, type: "radio",
+            question: "Ngoại lệ <code>NullPointerException</code> thuộc loại nào?",
+            options: ["Checked Exception", "Unchecked Exception", "Error", "Compile-time Exception"],
+            answer: 1,
+            explanation: "Nó kế thừa từ <code>RuntimeException</code>, là Unchecked Exception."
+        },
+        // --- Design Patterns (Code Reading) ---
+        {
+            id: 4, type: "code",
+            question: "Đoạn mã sau cài đặt mẫu thiết kế nào?",
+            code: `
+public class Logger {
+    private static Logger instance;
+    private Logger() {} // Private Constructor
+
+    public static Logger getInstance() {
+        if (instance == null) {
+            instance = new Logger();
+        }
+        return instance;
+    }
+}`,
+            options: ["Factory Method", "Singleton", "Adapter", "Strategy"],
+            answer: 1,
+            explanation: "Private constructor + Static method trả về instance duy nhất -> <b>Singleton</b>."
+        },
+        // --- Collections ---
+        {
+            id: 5, type: "radio",
+            question: "Lớp nào trong Collections Framework sử dụng cấu trúc dữ liệu 'Hash Table' và không đảm bảo thứ tự của các phần tử?",
+            options: ["ArrayList", "TreeMap", "HashMap", "LinkedList"],
+            answer: 2,
+            explanation: "<b>HashMap</b> dùng bảng băm, không duy trì thứ tự chèn. TreeMap duy trì thứ tự sắp xếp."
+        },
+        // --- Design Patterns (Theory) ---
+        {
+            id: 6, type: "radio",
+            question: "Bạn muốn thêm chức năng 'Viền đỏ' cho đối tượng 'Cửa sổ' mà không muốn sửa code lớp Cửa sổ hay dùng kế thừa tĩnh. Mẫu nào phù hợp?",
+            options: ["Strategy", "Decorator", "Composite", "Observer"],
+            answer: 1,
+            explanation: "<b>Decorator Pattern</b> cho phép thêm hành vi động (wrapper) cho đối tượng."
+        },
+        // --- Generics ---
+        {
+            id: 7, type: "code",
+            question: "Dòng code nào gây lỗi biên dịch?",
+            code: `
+List<Object> list1 = new ArrayList<String>(); // Dòng 1
+List<? extends Number> list2 = new ArrayList<Integer>(); // Dòng 2
+List<?> list3 = new ArrayList<String>(); // Dòng 3`,
+            options: ["Dòng 1", "Dòng 2", "Dòng 3", "Không có dòng nào"],
+            answer: 0,
+            explanation: "Generics không hỗ trợ biến đổi kiểu (invariance). <code>List&lt;Object&gt;</code> không phải cha của <code>List&lt;String&gt;</code>."
+        },
+        // --- Abstract/Interface ---
+        {
+            id: 8, type: "text",
+            question: "Điền vào chỗ trống: Một lớp có thể implement nhiều Interface, nhưng chỉ có thể extend ______ lớp cha.",
+            answer: "1",
+            explanation: "Java chỉ hỗ trợ đơn kế thừa với Class."
+        }
+    ];
+
+    /* -----------------------------------------------------
+       LOGIC JAVASCRIPT
+       ----------------------------------------------------- */
+
+    // 1. Render Review Section
+    function renderReview() {
+        const container = document.getElementById('review-container');
+        let html = '';
+        slideData.forEach((item, index) => {
+            const tags = item.tags.map(t => `<span class="tag">${t}</span>`).join('');
+            html += `
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(${index})">
+                    <span>${item.title}</span>
+                    <span style="font-size: 1.2rem;">+</span>
+                </div>
+                <div class="accordion-content" id="acc-${index}">
+                    <div style="margin-bottom:10px">${tags}</div>
+                    ${item.content}
+                </div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function toggleAccordion(index) {
+        const content = document.getElementById(`acc-${index}`);
+        content.classList.toggle('open');
+    }
+
+    // 2. Render Quiz Section
+    function formatCode(code) {
+        if (!code) return '';
+        return code
+            .replace(/</g, "&lt;").replace(/>/g, "&gt;")
+            .replace(/\b(public|private|static|class|void|if|return|new|extends|implements)\b/g, '<span class="kwd">$1</span>')
+            .replace(/\b(String|List|Integer|Logger)\b/g, '<span class="cls">$1</span>')
+            .replace(/(\/\/.*)/g, '<span class="com">$1</span>');
+    }
+
+    function renderQuiz() {
+        const container = document.getElementById('quiz-container');
+        let html = '';
+        quizData.forEach((q, index) => {
+            let inputHtml = '';
+
+            if (q.type === 'radio' || q.type === 'code') {
+                inputHtml = `<div class="options-group">`;
+                q.options.forEach((opt, optIdx) => {
+                    inputHtml += `
+                    <label class="option-label">
+                        <input type="radio" name="q-${index}" value="${optIdx}">
+                        <span>${opt}</span>
+                    </label>`;
+                });
+                inputHtml += `</div>`;
+            } else if (q.type === 'text') {
+                inputHtml = `<input type="text" name="q-${index}" placeholder="Nhập câu trả lời của bạn...">`;
+            }
+
+            html += `
+            <div class="question-block" id="q-block-${index}">
+                <div class="q-title">Câu ${index + 1}: ${q.question}</div>
+                ${q.code ? `<pre>${formatCode(q.code)}</pre>` : ''}
+                ${inputHtml}
+                <div class="feedback" id="feedback-${index}"></div>
+            </div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    // 3. Submit & Grading Logic
+    function submitQuiz() {
+        // Prevent form default submission
+        event.preventDefault();
+
+        let score = 0;
+        quizData.forEach((q, index) => {
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            let isCorrect = false;
+            let userVal = '';
+
+            if (q.type === 'text') {
+                const input = document.querySelector(`input[name="q-${index}"]`);
+                userVal = input.value.trim().toLowerCase();
+                if (userVal === q.answer.toLowerCase()) isCorrect = true;
+            } else {
+                const checked = document.querySelector(`input[name="q-${index}"]:checked`);
+                if (checked && parseInt(checked.value) === q.answer) isCorrect = true;
+            }
+
+            // Show feedback
+            feedbackEl.style.display = 'block';
+            if (isCorrect) {
+                score++;
+                feedbackEl.className = 'feedback correct';
+                feedbackEl.innerHTML = `✅ <b>Chính xác!</b><br>${q.explanation}`;
+            } else {
+                feedbackEl.className = 'feedback incorrect';
+                let correctText = q.type === 'text' ? q.answer : q.options[q.answer];
+                feedbackEl.innerHTML = `❌ <b>Sai rồi.</b> Đáp án đúng: <b>${correctText}</b><br><em>${q.explanation}</em>`;
+            }
+        });
+
+        // Update Score UI
+        document.getElementById('current-score').innerText = `${score}/${quizData.length}`;
+
+        // Scroll to top to see score
+        document.querySelector('.quiz-status-bar').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 4. Navigation Logic
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        if (screenId === 'home') document.getElementById('home-screen').classList.add('active');
+        if (screenId === 'review') document.getElementById('review-screen').classList.add('active');
+        if (screenId === 'quiz') document.getElementById('quiz-screen').classList.add('active');
+
+        // Auto scroll top
+        window.scrollTo(0,0);
+    }
+
+    // Initialize
+    window.onload = function() {
+        renderReview();
+        renderQuiz();
+    };
+
+</script>
+
+</body>
+</html>
