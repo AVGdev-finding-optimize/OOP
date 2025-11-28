@@ -60,3 +60,33 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .feedback { margin-top: 15px; padding: 15px; border-radius: 6px; display: none; }
 .feedback.correct { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
 .feedback.incorrect { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* Exam Configuration Section */
+.exam-config-section { padding: 20px 0; }
+.config-card { background: white; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+.config-card h2 { color: var(--primary); margin: 0 0 10px 0; }
+.config-card > p { color: #64748b; margin-bottom: 25px; }
+.config-group { margin-bottom: 25px; }
+.config-label { display: block; font-weight: 600; margin-bottom: 10px; color: var(--text); }
+.topic-selection { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border); }
+.topic-checkbox { display: flex; align-items: center; padding: 8px 10px; cursor: pointer; border-radius: 4px; transition: 0.2s; }
+.topic-checkbox:hover { background: #e2e8f0; }
+.topic-checkbox input { margin-right: 10px; accent-color: var(--primary); width: 18px; height: 18px; }
+.topic-checkbox span { font-size: 0.95rem; }
+.topic-list { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; max-height: 250px; overflow-y: auto; }
+.duration-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background: white; cursor: pointer; }
+.duration-select:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+
+/* Active Exam Section */
+.exam-active-section { }
+.exam-header-right { display: flex; align-items: center; gap: 15px; }
+
+/* Sticky Timer Display */
+.timer-display { background: var(--primary); color: white; padding: 10px 18px; border-radius: 8px; display: flex; align-items: center; gap: 8px; font-weight: 600; font-size: 1.1rem; position: sticky; top: 70px; z-index: 50; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.timer-display.warning { background: #f59e0b; animation: pulse 1s infinite; }
+.timer-display.danger { background: var(--error); animation: pulse 0.5s infinite; }
+.timer-icon { font-size: 1.2rem; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+/* Score badge update */
+.score-badge { background: var(--success); color: white; padding: 10px 18px; border-radius: 8px; font-weight: bold; font-size: 1.1rem; }

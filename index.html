@@ -66,21 +66,64 @@
 
     <!-- MÀN HÌNH 3: THI THỬ (EXAM) -->
     <div id="screen-exam" class="screen">
-        <div class="exam-header">
-            <div>
-                <h2>Đề thi ngẫu nhiên</h2>
-                <p>Thời gian làm bài: Không giới hạn</p>
+        <!-- State A: Exam Configuration -->
+        <div id="exam-config" class="exam-config-section">
+            <div class="config-card">
+                <h2>Cấu hình đề thi</h2>
+                <p>Chọn chủ đề và thời gian làm bài</p>
+                
+                <div class="config-group">
+                    <label class="config-label">Chọn chủ đề:</label>
+                    <div class="topic-selection">
+                        <label class="topic-checkbox">
+                            <input type="checkbox" id="select-all-topics" onchange="app.toggleAllTopics()">
+                            <span>Chọn tất cả</span>
+                        </label>
+                        <div id="topic-list" class="topic-list">
+                            <!-- JS sẽ render danh sách chủ đề vào đây -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="config-group">
+                    <label class="config-label" for="exam-duration">Thời gian làm bài:</label>
+                    <select id="exam-duration" class="duration-select">
+                        <option value="0">Không giới hạn</option>
+                        <option value="15">15 phút</option>
+                        <option value="30">30 phút</option>
+                        <option value="45">45 phút</option>
+                        <option value="60">60 phút</option>
+                    </select>
+                </div>
+                
+                <button class="cta-btn" onclick="app.startExamWithConfig()">Bắt đầu thi</button>
             </div>
-            <div class="score-badge" id="score-display" style="display: none;">0/40</div>
         </div>
 
-        <div id="exam-container">
-            <!-- JS sẽ render 40 câu hỏi vào đây -->
-        </div>
+        <!-- State B: Active Exam -->
+        <div id="exam-active" class="exam-active-section" style="display: none;">
+            <div class="exam-header">
+                <div>
+                    <h2>Đề thi ngẫu nhiên</h2>
+                    <p id="exam-info">Thời gian làm bài: Không giới hạn</p>
+                </div>
+                <div class="exam-header-right">
+                    <div class="timer-display" id="timer-display" style="display: none;">
+                        <span class="timer-icon">⏱</span>
+                        <span id="timer-countdown">00:00</span>
+                    </div>
+                    <div class="score-badge" id="score-display" style="display: none;">0/40</div>
+                </div>
+            </div>
 
-        <div class="exam-actions">
-            <button class="cta-btn" id="btn-submit" onclick="app.submitExam()">Nộp Bài</button>
-            <button class="cta-btn secondary" id="btn-reset" onclick="app.startExam()" style="display: none;">Làm đề mới</button>
+            <div id="exam-container">
+                <!-- JS sẽ render 40 câu hỏi vào đây -->
+            </div>
+
+            <div class="exam-actions">
+                <button class="cta-btn" id="btn-submit" onclick="app.submitExam()">Nộp Bài</button>
+                <button class="cta-btn secondary" id="btn-reset" onclick="app.resetExam()" style="display: none;">Làm đề mới</button>
+            </div>
         </div>
     </div>
 

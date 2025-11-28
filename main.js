@@ -2,6 +2,8 @@
 const app = {
     // Trạng thái hiện tại
     currentExam: [],
+    examTimer: null,
+    examTimeRemaining: 0,
     
     // 1. Điều hướng màn hình
     navigate: function(screenId) {
@@ -21,7 +23,7 @@ const app = {
 
         // Logic riêng cho từng màn hình
         if (screenId === 'review') this.renderReviewSidebar();
-        if (screenId === 'exam') this.startExam(); // Tự động load đề khi vào trang thi
+        if (screenId === 'exam') this.showExamConfig(); // Hiển thị form cấu hình khi vào trang thi
     },
 
     // 2. Logic Màn hình Review (ĐÃ SỬA LỖI HIỂN THỊ)
@@ -71,26 +73,179 @@ const app = {
         }
     },
 
-    // 3. Logic Màn hình Thi (Exam)
-    startExam: function() {
+    // 3. Logic Màn hình Thi (Exam) - CẤU HÌNH
+    
+    // Lấy danh sách chủ đề duy nhất từ QUESTION_BANK
+    getUniqueTopics: function() {
+        if (typeof QUESTION_BANK === 'undefined' || QUESTION_BANK.length === 0) {
+            return [];
+        }
+        const topics = QUESTION_BANK.map(q => q.topic);
+        return [...new Set(topics)].sort();
+    },
+
+    // Hiển thị form cấu hình đề thi (State A)
+    showExamConfig: function() {
+        // Dừng timer nếu đang chạy
+        this.stopTimer();
+        
+        // Hiển thị State A, ẩn State B
+        document.getElementById('exam-config').style.display = 'block';
+        document.getElementById('exam-active').style.display = 'none';
+        
+        // Render danh sách chủ đề
+        this.renderTopicList();
+        
+        // Reset select all checkbox
+        document.getElementById('select-all-topics').checked = false;
+        
+        // Reset duration
+        document.getElementById('exam-duration').value = '0';
+    },
+
+    // Render danh sách checkbox chủ đề
+    renderTopicList: function() {
+        const topicList = document.getElementById('topic-list');
+        const topics = this.getUniqueTopics();
+        
+        if (topics.length === 0) {
+            topicList.innerHTML = '<div style="padding:10px; color:red;">Chưa có dữ liệu câu hỏi!</div>';
+            return;
+        }
+        
+        let html = '';
+        topics.forEach((topic, index) => {
+            html += `
+                <label class="topic-checkbox">
+                    <input type="checkbox" name="topic" value="${this.escapeHtml(topic)}" onchange="app.updateSelectAll()">
+                    <span>${this.escapeHtml(topic)}</span>
+                </label>
+            `;
+        });
+        topicList.innerHTML = html;
+    },
+
+    // Toggle tất cả chủ đề
+    toggleAllTopics: function() {
+        const selectAll = document.getElementById('select-all-topics').checked;
+        const checkboxes = document.querySelectorAll('#topic-list input[name="topic"]');
+        checkboxes.forEach(cb => cb.checked = selectAll);
+    },
+
+    // Cập nhật trạng thái "Chọn tất cả" dựa trên các checkbox con
+    updateSelectAll: function() {
+        const checkboxes = document.querySelectorAll('#topic-list input[name="topic"]');
+        const checkedCount = document.querySelectorAll('#topic-list input[name="topic"]:checked').length;
+        const selectAll = document.getElementById('select-all-topics');
+        selectAll.checked = checkedCount === checkboxes.length && checkboxes.length > 0;
+    },
+
+    // Bắt đầu thi với cấu hình đã chọn
+    startExamWithConfig: function() {
+        // Lấy các chủ đề đã chọn
+        const selectedTopics = [];
+        document.querySelectorAll('#topic-list input[name="topic"]:checked').forEach(cb => {
+            selectedTopics.push(cb.value);
+        });
+        
+        // Kiểm tra có chọn ít nhất 1 chủ đề
+        if (selectedTopics.length === 0) {
+            alert('Vui lòng chọn ít nhất một chủ đề!');
+            return;
+        }
+        
+        // Lấy thời gian
+        const duration = parseInt(document.getElementById('exam-duration').value);
+        
+        // Lọc câu hỏi theo chủ đề
+        const filteredQuestions = QUESTION_BANK.filter(q => selectedTopics.includes(q.topic));
+        
+        if (filteredQuestions.length === 0) {
+            alert('Không có câu hỏi nào thuộc chủ đề đã chọn!');
+            return;
+        }
+        
+        // Chọn ngẫu nhiên tối đa 40 câu
+        const maxQuestions = 40;
+        const count = Math.min(maxQuestions, filteredQuestions.length);
+        this.currentExam = this.getRandomQuestions(filteredQuestions, count);
+        
+        // Ẩn State A, hiển thị State B
+        document.getElementById('exam-config').style.display = 'none';
+        document.getElementById('exam-active').style.display = 'block';
+        
         // Reset giao diện
         document.getElementById('btn-submit').style.display = 'inline-block';
         document.getElementById('btn-reset').style.display = 'none';
         document.getElementById('score-display').style.display = 'none';
         
-        // Lấy ngẫu nhiên 40 câu
-        // Nếu số câu trong kho < 40 thì lấy hết
-        const maxQuestions = 40;
-        const totalAvailable = typeof QUESTION_BANK !== 'undefined' ? QUESTION_BANK.length : 0;
-        const count = Math.min(maxQuestions, totalAvailable);
+        // Cập nhật thông tin thời gian
+        const examInfo = document.getElementById('exam-info');
+        const timerDisplay = document.getElementById('timer-display');
         
-        if (totalAvailable === 0) {
-            document.getElementById('exam-container').innerHTML = '<p>Chưa có dữ liệu câu hỏi.</p>';
-            return;
+        if (duration > 0) {
+            examInfo.textContent = `Thời gian làm bài: ${duration} phút | Số câu: ${this.currentExam.length}`;
+            timerDisplay.style.display = 'flex';
+            this.startTimer(duration * 60);
+        } else {
+            examInfo.textContent = `Thời gian làm bài: Không giới hạn | Số câu: ${this.currentExam.length}`;
+            timerDisplay.style.display = 'none';
         }
-
-        this.currentExam = this.getRandomQuestions(QUESTION_BANK, count);
+        
+        // Render câu hỏi
         this.renderExamQuestions();
+    },
+
+    // Timer functions
+    startTimer: function(seconds) {
+        this.examTimeRemaining = seconds;
+        this.updateTimerDisplay();
+        
+        this.examTimer = setInterval(() => {
+            this.examTimeRemaining--;
+            this.updateTimerDisplay();
+            
+            if (this.examTimeRemaining <= 0) {
+                this.stopTimer();
+                alert('Hết thời gian! Bài thi của bạn sẽ được tự động nộp.');
+                this.submitExam(true); // true = auto submit, skip confirmation
+            }
+        }, 1000);
+    },
+
+    updateTimerDisplay: function() {
+        const minutes = Math.floor(this.examTimeRemaining / 60);
+        const seconds = this.examTimeRemaining % 60;
+        const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        document.getElementById('timer-countdown').textContent = display;
+        
+        // Thay đổi màu sắc theo thời gian còn lại
+        const timerDisplay = document.getElementById('timer-display');
+        timerDisplay.classList.remove('warning', 'danger');
+        
+        if (this.examTimeRemaining <= 60) {
+            timerDisplay.classList.add('danger');
+        } else if (this.examTimeRemaining <= 300) {
+            timerDisplay.classList.add('warning');
+        }
+    },
+
+    stopTimer: function() {
+        if (this.examTimer) {
+            clearInterval(this.examTimer);
+            this.examTimer = null;
+        }
+    },
+
+    // Reset về trang cấu hình
+    resetExam: function() {
+        this.stopTimer();
+        this.showExamConfig();
+    },
+
+    // Legacy function for backward compatibility
+    startExam: function() {
+        this.showExamConfig();
     },
 
     // Thuật toán xáo trộn mảng
@@ -142,8 +297,11 @@ const app = {
     },
 
     // Hàm chấm điểm
-    submitExam: function() {
-        if(!confirm("Bạn có chắc chắn muốn nộp bài?")) return;
+    submitExam: function(autoSubmit) {
+        // Dừng timer
+        this.stopTimer();
+        
+        if(!autoSubmit && !confirm("Bạn có chắc chắn muốn nộp bài?")) return;
 
         let score = 0;
         
@@ -183,6 +341,9 @@ const app = {
         const scoreBadge = document.getElementById('score-display');
         scoreBadge.style.display = 'block';
         scoreBadge.innerText = `${score}/${this.currentExam.length}`;
+        
+        // Ẩn timer sau khi nộp bài
+        document.getElementById('timer-display').style.display = 'none';
         
         // Đổi nút Nộp bài -> Làm lại
         document.getElementById('btn-submit').style.display = 'none';
