@@ -1,0 +1,54 @@
+Index: index.html
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><!DOCTYPE html>\r\n<html lang=\"vi\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>Hệ thống Ôn tập OOP & Java - UET</title>\r\n    <link rel=\"stylesheet\" href=\"style.css\">\r\n</head>\r\n<body>\r\n\r\n    <!-- Navigation -->\r\n    <nav class=\"navbar\">\r\n        <div class=\"logo\">☕ OOP Master UET</div>\r\n        <div class=\"nav-links\">\r\n            <button class=\"nav-btn active\" onclick=\"app.navigate('home')\" id=\"nav-home\">\uD83C\uDFE0 Trang chủ</button>\r\n            <button class=\"nav-btn\" onclick=\"app.navigate('review')\" id=\"nav-review\">\uD83D\uDCDA Ôn tập</button>\r\n            <button class=\"nav-btn\" onclick=\"app.navigate('quiz')\" id=\"nav-quiz\">✍\uFE0F Thi thử</button>\r\n        </div>\r\n    </nav>\r\n\r\n    <div class=\"container\">\r\n        \r\n        <!-- SCREEN 1: DASHBOARD -->\r\n        <div id=\"screen-home\" class=\"screen active\">\r\n            <div class=\"hero-section\">\r\n                <h1 class=\"hero-title\">Hệ thống Ôn tập OOP & Java</h1>\r\n                <p>Tổng hợp kiến thức từ 12 chuyên đề bài giảng INT2204</p>\r\n            </div>\r\n\r\n            <div class=\"menu-grid\">\r\n                <div class=\"menu-card\" onclick=\"app.navigate('review')\">\r\n                    <span class=\"card-icon\">\uD83D\uDCD6</span>\r\n                    <div class=\"card-title\">Kho Tài Liệu</div>\r\n                    <div class=\"card-desc\">Xem lại tóm tắt lý thuyết từ các file PDF (Slides) đã học.</div>\r\n                </div>\r\n                <div class=\"menu-card\" onclick=\"app.navigate('exam')\">\r\n                    <span class=\"card-icon\">⏱\uFE0F</span>\r\n                    <div class=\"card-title\">Thi Thử (Có hẹn giờ)</div>\r\n                    <div class=\"card-desc\">Tùy chỉnh số lượng câu hỏi và thời gian làm bài.</div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n        <!-- SCREEN 2: REVIEW -->\r\n        <div id=\"screen-review\" class=\"screen\">\r\n            <div class=\"review-grid\">\r\n                <!-- Sidebar Menu -->\r\n                <div class=\"topic-sidebar\" id=\"slide-sidebar\">\r\n                    <!-- JS sẽ render danh sách bài học vào đây -->\r\n                </div>\r\n\r\n                <!-- Content Area -->\r\n                <div class=\"topic-content-area\" id=\"slide-content\">\r\n                    <div style=\"text-align: center; color: #64748b; padding: 3rem;\">\r\n                        <p>Vui lòng chọn một chủ đề bên trái để bắt đầu ôn tập.</p>\r\n                    </div>\r\n                </div>\r\n            </div>\r\n        </div>\r\n\r\n        <!-- SCREEN 3: QUIZ -->\r\n        <div id=\"screen-exam\" class=\"screen\">\r\n            \r\n            <!-- PHASE 1: SETUP -->\r\n            <div id=\"quiz-setup\" class=\"quiz-setup-card\">\r\n                <h2 style=\"color: var(--primary); margin-top: 0;\">⚙\uFE0F Cấu hình Bài thi</h2>\r\n                <p style=\"color: #64748b; margin-bottom: 20px;\">Hãy chọn chế độ thi phù hợp với bạn.</p>\r\n                \r\n                <div class=\"setup-group\">\r\n                    <label class=\"setup-label\">Số lượng câu hỏi (Tối đa <span id=\"max-q\">50</span>):</label>\r\n                    <input type=\"number\" id=\"setup-count\" class=\"setup-input\" value=\"20\" min=\"5\">\r\n                </div>\r\n\r\n                <div class=\"setup-group\">\r\n                    <label class=\"setup-label\">Thời gian làm bài (Phút):</label>\r\n                    <input type=\"number\" id=\"setup-time\" class=\"setup-input\" value=\"15\" min=\"1\" max=\"120\">\r\n                    <small style=\"color: #64748b;\">(Nhập 0 để không giới hạn thời gian)</small>\r\n                </div>\r\n\r\n                <button class=\"btn-submit\" onclick=\"app.startQuiz()\">Bắt đầu làm bài ▶</button>\r\n            </div>\r\n\r\n            <!-- PHASE 2: ACTIVE -->\r\n            <div id=\"quiz-active\" style=\"display: none;\">\r\n                <div class=\"quiz-status-bar\">\r\n                    <div class=\"timer-badge\" id=\"timer-display\">⏱\uFE0F 00:00</div>\r\n                    <div class=\"score-badge\">Điểm: <span id=\"current-score\">0</span></div>\r\n                </div>\r\n\r\n                <form id=\"quiz-form\">\r\n                    <div id=\"quiz-container\">\r\n                        <!-- Questions injected here -->\r\n                    </div>\r\n                </form>\r\n\r\n                <button id=\"btn-finish\" class=\"btn-submit\" onclick=\"app.submitQuiz()\">Nộp Bài</button>\r\n                <button id=\"btn-restart\" class=\"btn-submit\" style=\"display: none; background: #64748b;\" onclick=\"app.resetQuizSetup()\">Thi lại đề mới</button>\r\n            </div>\r\n        </div>\r\n\r\n    </div>\r\n\r\n        <script>\r\n        function checkFile(id, name) {\r\n            if (typeof window[id] === 'undefined') {\r\n                alert(`⚠\uFE0F LỖI: Không tìm thấy dữ liệu từ file \"${name}\"!\\n\\nHãy kiểm tra:\\n1. Bạn đã tạo file này chưa?\\n2. Tên file có đúng chính xác không?\\n3. File có nằm cùng thư mục với index.html không?`);\r\n                return false;\r\n            }\r\n            return true;\r\n        }\r\n\r\n        window.onerror = function(message, source, lineno, colno, error) {\r\n            alert(`\uD83D\uDEA8 LỖI CÚ PHÁP:\\n${message}\\nTại file: ${source}\\nDòng: ${lineno}`);\r\n        };\r\n    </script>\r\n\r\n    <!-- Load dữ liệu -->\r\n    <script src=\"data_slides.js\"></script>\r\n    <script src=\"data_questions.js\"></script>\r\n    \r\n    <!-- Kiểm tra dữ liệu trước khi chạy Logic -->\r\n    <script>\r\n        // Kiểm tra biến SLIDE_DATA và QUESTION_BANK xem đã được load chưa\r\n        if (checkFile('SLIDE_DATA', 'data_slides.js') && checkFile('QUESTION_BANK', 'data_questions.js')) {\r\n            // Nếu ổn thì mới load logic chính\r\n            const script = document.createElement('script');\r\n            script.src = \"main.js\";\r\n            document.body.appendChild(script);\r\n        }\r\n    </script>\r\n\r\n</body>\r\n</html>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/index.html b/index.html
+--- a/index.html	(revision 40ae09e10e2eed7dd465807ff88f4a4d9c2cc901)
++++ b/index.html	(date 1764301188410)
+@@ -14,7 +14,7 @@
+         <div class="nav-links">
+             <button class="nav-btn active" onclick="app.navigate('home')" id="nav-home">🏠 Trang chủ</button>
+             <button class="nav-btn" onclick="app.navigate('review')" id="nav-review">📚 Ôn tập</button>
+-            <button class="nav-btn" onclick="app.navigate('quiz')" id="nav-quiz">✍️ Thi thử</button>
++            <button class="nav-btn" onclick="app.navigate('exam')" id="nav-quiz">✍️ Thi thử</button>
+         </div>
+     </nav>
+ 
+@@ -100,7 +100,7 @@
+ 
+     </div>
+ 
+-        <script>
++    <script>
+         function checkFile(id, name) {
+             if (typeof window[id] === 'undefined') {
+                 alert(`⚠️ LỖI: Không tìm thấy dữ liệu từ file "${name}"!\n\nHãy kiểm tra:\n1. Bạn đã tạo file này chưa?\n2. Tên file có đúng chính xác không?\n3. File có nằm cùng thư mục với index.html không?`);
+@@ -113,6 +113,25 @@
+             alert(`🚨 LỖI CÚ PHÁP:\n${message}\nTại file: ${source}\nDòng: ${lineno}`);
+         };
+     </script>
++
++    <script>
++        // Safe stub so inline onclick handlers (e.g. app.navigate(...)) won't throw
++        // while data files and main.js are still loading; main.js should overwrite this.
++        window.app = window.app || {
++            navigate: function() {
++                alert('Ứng dụng đang tải, vui lòng chờ...');
++            },
++            startQuiz: function() {
++                alert('Ứng dụng đang tải, vui lòng chờ...');
++            },
++            submitQuiz: function() {
++                alert('Ứng dụng đang tải, vui lòng chờ...');
++            },
++            resetQuizSetup: function() {
++                alert('Ứng dụng đang tải, vui lòng chờ...');
++            }
++        };
++    </script>
+ 
+     <!-- Load dữ liệu -->
+     <script src="data_slides.js"></script>

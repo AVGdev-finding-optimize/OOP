@@ -60,3 +60,185 @@ body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--
 .feedback { margin-top: 15px; padding: 15px; border-radius: 6px; display: none; }
 .feedback.correct { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
 .feedback.incorrect { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+
+/* --- EXAM CONFIGURATION STYLES --- */
+.exam-setup-container { max-width: 800px; margin: 0 auto; }
+.config-section { margin-bottom: 25px; }
+.config-section h3 { font-size: 1.1rem; color: var(--text); border-bottom: 2px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
+
+/* Dropdown styling */
+.custom-select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background: white; cursor: pointer; }
+
+/* Checkbox Grid System */
+.topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.checkbox-container { display: block; position: relative; padding-left: 30px; margin-bottom: 12px; cursor: pointer; user-select: none; }
+.checkbox-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
+.checkmark { position: absolute; top: 0; left: 0; height: 20px; width: 20px; background-color: #eee; border-radius: 4px; }
+.checkbox-container:hover input ~ .checkmark { background-color: #ccc; }
+.checkbox-container input:checked ~ .checkmark { background-color: var(--primary); }
+.checkmark:after { content: ""; position: absolute; display: none; }
+.checkbox-container input:checked ~ .checkmark:after { display: block; }
+.checkbox-container .checkmark:after { left: 7px; top: 3px; width: 5px; height: 10px; border: solid white; border-width: 0 3px 3px 0; transform: rotate(45deg); }
+.select-all { font-weight: bold; color: var(--primary); margin-bottom: 15px; }
+
+/* Timer Styling */
+.exam-info-right { display: flex; align-items: center; gap: 10px; }
+.timer-badge { background: #fff; border: 2px solid var(--primary); color: var(--primary); padding: 8px 15px; border-radius: 20px; font-weight: bold; font-family: monospace; font-size: 1.2rem; min-width: 80px; text-align: center; }
+.timer-badge.warning { border-color: var(--error); color: var(--error); animation: pulse 1s infinite; }
+
+@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+/* --- TÍNH NĂNG MỚI: STICKY HEADER & TRACKING --- */
+
+/* 1. Ghim thanh đồng hồ */
+.sticky-header {
+    position: sticky;
+    /* Navbar cũ cao khoảng 60-70px, ta đặt top: 70px để nó nằm ngay dưới navbar */
+    top: 70px; 
+    z-index: 99;
+    border-bottom: 4px solid var(--primary);
+    display: block; /* Ghi đè display: flex cũ */
+    padding-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.header-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+/* 2. Bảng câu hỏi (Palette) */
+.question-palette {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 100px; /* Giới hạn chiều cao, nếu nhiều câu quá thì cuộn */
+    overflow-y: auto;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+/* Style cho từng ô số */
+.q-dot {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: #f8fafc;
+    color: var(--text);
+    transition: all 0.2s;
+}
+
+.q-dot:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+/* Trạng thái đã làm */
+.q-dot.answered {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* Trạng thái hiện tại (Đang xem - Optional nếu muốn làm thêm) */
+.q-dot.current {
+    box-shadow: 0 0 0 2px var(--primary-dark);
+}
+
+/* Khi xem màn hình nhỏ (Mobile) */
+@media (max-width: 768px) {
+    .sticky-header {
+        top: 60px; /* Điều chỉnh lại chút cho mobile */
+        padding: 10px;
+    }
+    .q-dot {
+        width: 25px; height: 25px; font-size: 0.75rem;
+    }
+}
+
+/* --- TÍNH NĂNG: CHẾ ĐỘ TẬP TRUNG (LOCK MODE) --- */
+
+/* Khi đang thi (body có class .exam-mode) */
+body.exam-mode .navbar {
+    display: none !important; /* Ẩn thanh menu */
+}
+
+body.exam-mode .container {
+    margin-top: 0; /* Xóa khoảng cách thừa phía trên */
+}
+
+/* Điều chỉnh lại thanh Sticky Header khi không còn Navbar */
+body.exam-mode .sticky-header {
+    top: 0; /* Dính sát mép trên cùng màn hình */
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); /* Thêm bóng đổ cho đẹp */
+}
+
+/* Tùy chọn: Ẩn luôn thanh cuộn trình duyệt để cảm giác như App (nhưng vẫn cuộn được) */
+body.exam-mode::-webkit-scrollbar {
+    width: 8px;
+}
+body.exam-mode::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+/* --- NÚT BẬT TẮT BẢNG CÂU HỎI --- */
+.palette-toggle-btn {
+    background: white;
+    border: 2px solid var(--border);
+    color: var(--text);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Hình tròn */
+    cursor: pointer;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-left: 10px; /* Cách đồng hồ ra một chút */
+}
+
+.palette-toggle-btn:hover, .palette-toggle-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* --- SỬA LẠI BẢNG CÂU HỎI (DROPDOWN) --- */
+.question-palette {
+    /* Mặc định ẩn (thu gọn lại) */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden; 
+    
+    /* Hiệu ứng trượt mượt mà */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Layout cũ */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: none; /* Bỏ viền cũ đi cho đẹp */
+    padding: 0 5px;   /* Padding ngang nhỏ */
+    margin-top: 0;
+}
+
+/* Khi có class .open thì mở ra */
+.question-palette.open {
+    max-height: 300px; /* Đủ lớn để hiện các câu hỏi */
+    opacity: 1;
+    padding-top: 15px; /* Thêm khoảng cách khi mở */
+    border-top: 1px solid #eee;
+    margin-top: 10px;
+    overflow-y: auto; /* Nếu nhiều quá thì cuộn */
+}

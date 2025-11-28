@@ -1,97 +1,175 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Hệ thống Thi & Ôn tập OOP</title>
     <!-- Liên kết file CSS -->
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- THANH ĐIỀU HƯỚNG -->
+    <nav class="navbar">
+      <div class="logo">
+        <span style="font-size: 1.5rem">☕</span> OOP Master UET
+      </div>
+      <div class="nav-links">
+        <button class="nav-btn active" onclick="app.navigate('home')">
+          Trang Chủ
+        </button>
+        <button class="nav-btn" onclick="app.navigate('review')">
+          Ôn Tập Slide
+        </button>
+        <button class="nav-btn" onclick="app.navigate('exam')">
+          Thi Thử (40 câu)
+        </button>
+      </div>
+    </nav>
 
-<!-- THANH ĐIỀU HƯỚNG -->
-<nav class="navbar">
-    <div class="logo">
-        <span style="font-size: 1.5rem;">☕</span> OOP Master UET
-    </div>
-    <div class="nav-links">
-        <button class="nav-btn active" onclick="app.navigate('home')">Trang Chủ</button>
-        <button class="nav-btn" onclick="app.navigate('review')">Ôn Tập Slide</button>
-        <button class="nav-btn" onclick="app.navigate('exam')">Thi Thử (40 câu)</button>
-    </div>
-</nav>
-
-<div class="container">
-
-    <!-- MÀN HÌNH 1: TRANG CHỦ -->
-    <div id="screen-home" class="screen active">
+    <div class="container">
+      <!-- MÀN HÌNH 1: TRANG CHỦ -->
+      <div id="screen-home" class="screen active">
         <div class="hero-box">
-            <h1>Chào mừng đến với hệ thống ôn tập INT2204</h1>
-            <p>Nền tảng tổng hợp kiến thức và thi trắc nghiệm khách quan.</p>
+          <h1>Chào mừng đến với hệ thống ôn tập INT2204</h1>
+          <p>Nền tảng tổng hợp kiến thức và thi trắc nghiệm khách quan.</p>
 
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>12</h3>
-                    <p>Chuyên đề bài giảng</p>
-                </div>
-                <div class="stat-card">
-                    <h3>Ngân hàng đề</h3>
-                    <p>Đa dạng chủ đề</p>
-                </div>
-                <div class="stat-card">
-                    <h3>40</h3>
-                    <p>Câu hỏi/Đề thi</p>
-                </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <h3>12</h3>
+              <p>Chuyên đề bài giảng</p>
             </div>
+            <div class="stat-card">
+              <h3>Ngân hàng đề</h3>
+              <p>Đa dạng chủ đề</p>
+            </div>
+            <div class="stat-card">
+              <h3>40</h3>
+              <p>Câu hỏi/Đề thi</p>
+            </div>
+          </div>
 
-            <button class="cta-btn" onclick="app.navigate('exam')">Bắt đầu thi ngay</button>
+          <button class="cta-btn" onclick="app.navigate('exam')">
+            Bắt đầu thi ngay
+          </button>
         </div>
-    </div>
+      </div>
 
-    <!-- MÀN HÌNH 2: ÔN TẬP (SLIDE) -->
-    <div id="screen-review" class="screen">
+      <!-- MÀN HÌNH 2: ÔN TẬP (SLIDE) -->
+      <div id="screen-review" class="screen">
         <div class="layout-grid">
-            <!-- Sidebar Menu -->
-            <div class="sidebar" id="slide-sidebar">
-                <!-- JS sẽ render danh sách bài học vào đây -->
+          <!-- Sidebar Menu -->
+          <div class="sidebar" id="slide-sidebar">
+            <!-- JS sẽ render danh sách bài học vào đây -->
+          </div>
+          <!-- Nội dung chính -->
+          <div class="content-area">
+            <div id="slide-content">
+              <div class="placeholder-text">
+                Chọn một bài học bên trái để xem nội dung chi tiết.
+              </div>
             </div>
-            <!-- Nội dung chính -->
-            <div class="content-area">
-                <div id="slide-content">
-                    <div class="placeholder-text">Chọn một bài học bên trái để xem nội dung chi tiết.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MÀN HÌNH 3: THI THỬ (EXAM) -->
+      <div id="screen-exam" class="screen">
+        <div id="exam-setup" class="exam-setup-container">
+          <div class="hero-box" style="margin-top: 0; text-align: left">
+            <h2 style="color: var(--primary); margin-top: 0">
+              Cấu hình bài thi
+            </h2>
+            <p>Chọn các chủ đề bạn muốn ôn tập và giới hạn thời gian.</p>
+
+            <div class="config-section">
+              <h3>⏱️ Thời gian làm bài</h3>
+              <select id="exam-duration" class="custom-select">
+                <option value="0">Không giới hạn</option>
+                <option value="15">15 Phút</option>
+                <option value="30">30 Phút</option>
+                <option value="45">45 Phút</option>
+                <option value="60">60 Phút</option>
+              </select>
+            </div>
+
+            <div class="config-section">
+              <h3>📚 Chủ đề kiến thức</h3>
+              <label class="checkbox-container select-all">
+                <input
+                  type="checkbox"
+                  id="check-all-topics"
+                  checked
+                  onchange="app.toggleAllTopics(this)"
+                />
+                <span class="checkmark"></span>
+                Chọn tất cả
+              </label>
+              <div id="topic-selection-list" class="topic-grid"></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 30px">
+              <button class="cta-btn" onclick="app.startConfiguredExam()">
+                Bắt đầu làm bài
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div id="exam-active" style="display: none">
+          <div class="exam-header sticky-header">
+            <div class="header-top-row">
+              <div>
+                <h2>Làm bài thi</h2>
+                <p id="topic-summary" style="margin: 0">Đang thi tổng hợp</p>
+              </div>
+              <div class="exam-info-right">
+                <div class="timer-badge" id="timer-display">--:--</div>
+
+                <div
+                  class="score-badge"
+                  id="score-display"
+                  style="display: none"
+                >
+                  0/40
                 </div>
+
+                <button
+                  class="palette-toggle-btn"
+                  onclick="app.togglePalette()"
+                  title="Danh sách câu hỏi"
+                >
+                  <span>🔢</span>
+                </button>
+              </div>
             </div>
+
+            <div id="question-palette" class="question-palette"></div>
+          </div>
+
+          <div id="exam-container"></div>
+
+          <div class="exam-actions">
+            <button class="cta-btn" id="btn-submit" onclick="app.submitExam()">
+              Nộp Bài
+            </button>
+            <button
+              class="cta-btn secondary"
+              id="btn-reset"
+              onclick="app.initExamSetup()"
+              style="display: none"
+            >
+              Làm đề mới
+            </button>
+          </div>
         </div>
+      </div>
     </div>
 
-    <!-- MÀN HÌNH 3: THI THỬ (EXAM) -->
-    <div id="screen-exam" class="screen">
-        <div class="exam-header">
-            <div>
-                <h2>Đề thi ngẫu nhiên</h2>
-                <p>Thời gian làm bài: Không giới hạn</p>
-            </div>
-            <div class="score-badge" id="score-display" style="display: none;">0/40</div>
-        </div>
-
-        <div id="exam-container">
-            <!-- JS sẽ render 40 câu hỏi vào đây -->
-        </div>
-
-        <div class="exam-actions">
-            <button class="cta-btn" id="btn-submit" onclick="app.submitExam()">Nộp Bài</button>
-            <button class="cta-btn secondary" id="btn-reset" onclick="app.startExam()" style="display: none;">Làm đề mới</button>
-        </div>
-    </div>
-
-</div>
-
-<!-- LIÊN KẾT CÁC FILE JS (Thứ tự quan trọng) -->
-<!-- 1. Load dữ liệu trước -->
-<script src="data_slides.js"></script>
-<script src="data_questions.js"></script>
-<!-- 2. Load logic xử lý sau -->
-<script src="main.js"></script>
-
-</body>
+    <!-- LIÊN KẾT CÁC FILE JS (Thứ tự quan trọng) -->
+    <!-- 1. Load dữ liệu trước -->
+    <script src="data_slides.js"></script>
+    <script src="data_questions.js"></script>
+    <!-- 2. Load logic xử lý sau -->
+    <script src="main.js"></script>
+  </body>
 </html>
